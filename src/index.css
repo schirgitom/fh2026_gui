@@ -1,0 +1,58 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+html, body, #root {
+  height: 100%;
+}
+
+body {
+  @apply bg-ink-50 text-ink-900 antialiased;
+  font-family: 'Outfit', 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #aeeaff transparent;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #aeeaff;
+  border-radius: 999px;
+}
+
+@layer components {
+  .glass {
+    @apply bg-white/70 backdrop-blur-md border border-white/60 shadow-soft;
+  }
+
+  .card {
+    @apply rounded-2xl bg-white shadow-card border border-ink-100;
+  }
+
+  .card-dark {
+    @apply rounded-2xl bg-ink-900 text-white shadow-soft border border-ink-800;
+  }
+
+  .heading {
+    @apply text-2xl md:text-3xl font-semibold tracking-tight;
+  }
+
+  .subheading {
+    @apply text-sm text-ink-500 uppercase tracking-[0.2em];
+  }
+}
+
+@layer utilities {
+  .grid-auto-fit {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  }
+}
