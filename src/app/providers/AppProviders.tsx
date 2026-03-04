@@ -1,6 +1,7 @@
 import { ReactNode } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ErrorBoundary } from '@/shared/components/ErrorBoundary';
+import { LanguageProvider } from '@/i18n/LanguageProvider';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -18,6 +19,8 @@ interface AppProvidersProps {
 
 export const AppProviders = ({ children }: AppProvidersProps) => (
   <ErrorBoundary>
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    <QueryClientProvider client={queryClient}>
+      <LanguageProvider>{children}</LanguageProvider>
+    </QueryClientProvider>
   </ErrorBoundary>
 );

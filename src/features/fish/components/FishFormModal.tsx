@@ -3,6 +3,7 @@ import { Fish } from '@/shared/types';
 import { Modal } from '@/shared/ui/Modal';
 import { Input } from '@/shared/ui/Input';
 import { Button } from '@/shared/ui/Button';
+import { useI18n } from '@/i18n/LanguageProvider';
 
 interface FishFormModalProps {
   open: boolean;
@@ -13,58 +14,70 @@ interface FishFormModalProps {
 
 const defaultForm: Omit<Fish, 'id' | 'aquariumId'> = {
   name: '',
-  species: '',
-  quantity: 1
+  amount: 1,
+  description: '',
+  deathDate: ''
 };
 
 export const FishFormModal = ({ open, onClose, onSubmit, initial }: FishFormModalProps) => {
   const [form, setForm] = useState<Omit<Fish, 'id' | 'aquariumId'>>(defaultForm);
+  const { t } = useI18n();
 
   useEffect(() => {
     if (open) {
       setForm({
         name: initial?.name ?? '',
-        species: initial?.species ?? '',
-        quantity: initial?.quantity ?? 1
+        amount: initial?.amount ?? 1,
+        description: initial?.description ?? '',
+        deathDate: initial?.deathDate ?? ''
       });
     }
   }, [open, initial]);
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    onSubmit({ ...form, quantity: Number(form.quantity) });
+    onSubmit({
+      ...form,
+      amount: Number(form.amount),
+      deathDate: form.deathDate || undefined
+    });
   };
 
   return (
-    <Modal open={open} onClose={onClose} title={initial ? 'Edit fish' : 'Add fish'}>
+    <Modal open={open} onClose={onClose} title={initial ? t('fish.modal.editTitle') : t('fish.modal.addTitle')}>
       <form className="space-y-4" onSubmit={handleSubmit}>
         <Input
-          label="Name"
+          label={t('common.name')}
           value={form.name}
           onChange={(event) => setForm((prev) => ({ ...prev, name: event.target.value }))}
           required
         />
         <Input
-          label="Species"
-          value={form.species}
-          onChange={(event) => setForm((prev) => ({ ...prev, species: event.target.value }))}
-          required
-        />
-        <Input
-          label="Quantity"
+          label={t('common.quantity')}
           type="number"
           min={1}
-          value={form.quantity}
+          value={form.amount}
           onChange={(event) =>
-            setForm((prev) => ({ ...prev, quantity: Number(event.target.value) }))
+            setForm((prev) => ({ ...prev, amount: Number(event.target.value) }))
           }
           required
         />
+        <Input
+          label={t('common.description')}
+          value={form.description ?? ''}
+          onChange={(event) => setForm((prev) => ({ ...prev, description: event.target.value }))}
+        />
+        <Input
+          label={t('fish.deathDate')}
+          type="date"
+          value={form.deathDate?.slice(0, 10) ?? ''}
+          onChange={(event) => setForm((prev) => ({ ...prev, deathDate: event.target.value }))}
+        />
         <div className="flex justify-end gap-3">
           <Button type="button" variant="ghost" onClick={onClose}>
-            Cancel
+            {t('common.cancel')}
           </Button>
-          <Button type="submit">Save</Button>
+          <Button type="submit">{t('common.save')}</Button>
         </div>
       </form>
     </Modal>

@@ -6,13 +6,13 @@ interface LatestMeasurementResponse {
 }
 
 interface MeasurementsResponse {
-  getMeasurementsAsync: Measurement[];
+  measurements: Measurement[];
 }
 
 export const measurementApi = {
   latest: async (aquariumId: string) => {
     const query = `
-      query LatestMeasurement($aquariumId: String!) {
+      query LatestMeasurement($aquariumId: ID!) {
         latestMeasurement(aquariumId: $aquariumId) {
           aquariumId
           timestamp
@@ -32,8 +32,8 @@ export const measurementApi = {
   },
   range: async (aquariumId: string, from: string, to: string, limit: number) => {
     const query = `
-      query Measurements($aquariumId: String!, $from: String!, $to: String!, $limit: Int!) {
-        getMeasurementsAsync(aquariumId: $aquariumId, from: $from, to: $to, limit: $limit) {
+      query Measurements($aquariumId: ID!, $from: DateTime!, $to: DateTime!, $limit: Int!) {
+        measurements(aquariumId: $aquariumId, from: $from, to: $to, limit: $limit) {
           aquariumId
           timestamp
           temperature
@@ -47,7 +47,21 @@ export const measurementApi = {
       }
     `;
 
-    const data = await gqlRequest<MeasurementsResponse>(query, { aquariumId, from, to, limit });
-    return data.getMeasurementsAsync;
+    const fromIso = from.includes('T') ? from : `${from}T00:00:00.000Z`;
+    const toIso = to.includes('T') ? to : `${to}T23:59:59.999Z`;
+    if (Number.isNaN(Date.parse(fromIso)) || Number.isNaN(Date.parse(toIso))) {
+      throw new Error('Ungueltiger Datumsbereich fuer Measurements.');
+    }
+    if (!Number.isInteger(limit) || limit < 1) {
+      throw new Error('Limit muss eine positive Ganzzahl sein.');
+    }
+
+    const data = await gqlRequest<MeasurementsResponse>(query, {
+      aquariumId,
+      from: fromIso,
+      to: toIso,
+      limit
+    });
+    return data.measurements;
   }
 };

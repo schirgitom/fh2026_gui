@@ -12,15 +12,7 @@ import { useMeasurementsRange } from '@/features/measurements/hooks/useMeasureme
 import { ToggleGroup } from '@/shared/ui/ToggleGroup';
 import { Skeleton } from '@/shared/ui/Skeleton';
 import { Button } from '@/shared/ui/Button';
-
-const metricOptions = [
-  { id: 'temperature', label: 'Temperature' },
-  { id: 'ph', label: 'pH' },
-  { id: 'oxygen', label: 'Oxygen' },
-  { id: 'mg', label: 'Magnesium' },
-  { id: 'kh', label: 'KH' },
-  { id: 'ca', label: 'Calcium' }
-];
+import { useI18n } from '@/i18n/LanguageProvider';
 
 const colors: Record<string, string> = {
   temperature: '#1fb3ff',
@@ -43,6 +35,16 @@ export const MeasurementsChart = ({ aquariumId }: MeasurementsChartProps) => {
   const [to, setTo] = useState(toDateInput(today));
   const [limit, setLimit] = useState(200);
   const [selected, setSelected] = useState<string[]>(['temperature', 'ph', 'oxygen']);
+  const { t, locale } = useI18n();
+
+  const metricOptions = [
+    { id: 'temperature', label: t('measurement.temperature') },
+    { id: 'ph', label: t('measurement.ph') },
+    { id: 'oxygen', label: t('measurement.oxygen') },
+    { id: 'mg', label: t('measurement.magnesium') },
+    { id: 'kh', label: t('measurement.kh') },
+    { id: 'ca', label: t('measurement.calcium') }
+  ];
 
   const { data, isLoading, error, refetch } = useMeasurementsRange(aquariumId, from, to, limit);
 
@@ -50,21 +52,31 @@ export const MeasurementsChart = ({ aquariumId }: MeasurementsChartProps) => {
     () =>
       (data ?? []).map((item) => ({
         ...item,
-        timestampLabel: new Date(item.timestamp).toLocaleString()
+        timestampLabel: new Date(item.timestamp).toLocaleString(locale)
       })),
-    [data]
+    [data, locale]
   );
+
+  const onLimitChange = (rawValue: string) => {
+    const parsed = Number(rawValue);
+    if (!Number.isFinite(parsed)) {
+      setLimit(200);
+      return;
+    }
+    const clamped = Math.max(50, Math.min(1000, Math.round(parsed)));
+    setLimit(clamped);
+  };
 
   return (
     <div className="card p-6 space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <p className="subheading">Historical measurements</p>
-          <h3 className="text-xl font-semibold text-ink-900">Trends over time</h3>
+          <p className="subheading">{t('measurement.historical')}</p>
+          <h3 className="text-xl font-semibold text-ink-900">{t('measurement.trends')}</h3>
         </div>
         <div className="flex flex-wrap gap-3">
           <label className="flex flex-col text-xs text-ink-500">
-            From
+            {t('common.from')}
             <input
               type="date"
               className="rounded-lg border border-ink-200 px-3 py-2 text-sm text-ink-700"
@@ -73,7 +85,7 @@ export const MeasurementsChart = ({ aquariumId }: MeasurementsChartProps) => {
             />
           </label>
           <label className="flex flex-col text-xs text-ink-500">
-            To
+            {t('common.to')}
             <input
               type="date"
               className="rounded-lg border border-ink-200 px-3 py-2 text-sm text-ink-700"
@@ -82,18 +94,18 @@ export const MeasurementsChart = ({ aquariumId }: MeasurementsChartProps) => {
             />
           </label>
           <label className="flex flex-col text-xs text-ink-500">
-            Limit
+            {t('common.limit')}
             <input
               type="number"
               min={50}
               max={1000}
               className="rounded-lg border border-ink-200 px-3 py-2 text-sm text-ink-700"
               value={limit}
-              onChange={(event) => setLimit(Number(event.target.value))}
+              onChange={(event) => onLimitChange(event.target.value)}
             />
           </label>
           <Button variant="secondary" onClick={() => refetch()}>
-            Apply
+            {t('common.apply')}
           </Button>
         </div>
       </div>

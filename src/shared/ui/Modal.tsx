@@ -1,6 +1,7 @@
 import { ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import clsx from 'clsx';
+import { useI18n } from '@/i18n/LanguageProvider';
 
 interface ModalProps {
   open: boolean;
@@ -11,6 +12,8 @@ interface ModalProps {
 }
 
 export const Modal = ({ open, title, onClose, children, widthClassName }: ModalProps) => {
+  const { t } = useI18n();
+
   if (!open) return null;
 
   return createPortal(
@@ -21,7 +24,7 @@ export const Modal = ({ open, title, onClose, children, widthClassName }: ModalP
           <button
             onClick={onClose}
             className="text-ink-500 hover:text-ink-700"
-            aria-label="Close modal"
+            aria-label={t('common.closeModal')}
           >
             ✕
           </button>

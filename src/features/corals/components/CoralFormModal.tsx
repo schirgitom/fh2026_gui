@@ -3,6 +3,7 @@ import { Coral } from '@/shared/types';
 import { Modal } from '@/shared/ui/Modal';
 import { Input } from '@/shared/ui/Input';
 import { Button } from '@/shared/ui/Button';
+import { useI18n } from '@/i18n/LanguageProvider';
 
 interface CoralFormModalProps {
   open: boolean;
@@ -13,58 +14,73 @@ interface CoralFormModalProps {
 
 const defaultForm: Omit<Coral, 'id' | 'aquariumId'> = {
   name: '',
-  species: '',
-  quantity: 1
+  amount: 1,
+  description: '',
+  coralTyp: 0
 };
 
 export const CoralFormModal = ({ open, onClose, onSubmit, initial }: CoralFormModalProps) => {
   const [form, setForm] = useState<Omit<Coral, 'id' | 'aquariumId'>>(defaultForm);
+  const { t } = useI18n();
 
   useEffect(() => {
     if (open) {
       setForm({
         name: initial?.name ?? '',
-        species: initial?.species ?? '',
-        quantity: initial?.quantity ?? 1
+        amount: initial?.amount ?? 1,
+        description: initial?.description ?? '',
+        coralTyp: initial?.coralTyp ?? 0
       });
     }
   }, [open, initial]);
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    onSubmit({ ...form, quantity: Number(form.quantity) });
+    onSubmit({ ...form, amount: Number(form.amount) });
   };
 
   return (
-    <Modal open={open} onClose={onClose} title={initial ? 'Edit coral' : 'Add coral'}>
+    <Modal open={open} onClose={onClose} title={initial ? t('coral.modal.editTitle') : t('coral.modal.addTitle')}>
       <form className="space-y-4" onSubmit={handleSubmit}>
         <Input
-          label="Name"
+          label={t('common.name')}
           value={form.name}
           onChange={(event) => setForm((prev) => ({ ...prev, name: event.target.value }))}
           required
         />
         <Input
-          label="Species"
-          value={form.species}
-          onChange={(event) => setForm((prev) => ({ ...prev, species: event.target.value }))}
-          required
-        />
-        <Input
-          label="Quantity"
+          label={t('common.quantity')}
           type="number"
           min={1}
-          value={form.quantity}
+          value={form.amount}
           onChange={(event) =>
-            setForm((prev) => ({ ...prev, quantity: Number(event.target.value) }))
+            setForm((prev) => ({ ...prev, amount: Number(event.target.value) }))
           }
           required
         />
+        <Input
+          label={t('common.description')}
+          value={form.description ?? ''}
+          onChange={(event) => setForm((prev) => ({ ...prev, description: event.target.value }))}
+        />
+        <label className="flex flex-col gap-2 text-sm text-ink-700">
+          <span className="font-medium">{t('coral.type')}</span>
+          <select
+            className="rounded-xl border border-ink-200 bg-white px-4 py-2"
+            value={form.coralTyp}
+            onChange={(event) =>
+              setForm((prev) => ({ ...prev, coralTyp: Number(event.target.value) as 0 | 1 }))
+            }
+          >
+            <option value={0}>{t('coral.type.hard')}</option>
+            <option value={1}>{t('coral.type.soft')}</option>
+          </select>
+        </label>
         <div className="flex justify-end gap-3">
           <Button type="button" variant="ghost" onClick={onClose}>
-            Cancel
+            {t('common.cancel')}
           </Button>
-          <Button type="submit">Save</Button>
+          <Button type="submit">{t('common.save')}</Button>
         </div>
       </form>
     </Modal>

@@ -4,10 +4,11 @@ import { Button } from '@/shared/ui/Button';
 import { Skeleton } from '@/shared/ui/Skeleton';
 import { EmptyState } from '@/shared/components/EmptyState';
 import { AquariumCard } from '@/features/aquariums/components/AquariumCard';
-import { AquariumFormModal } from '@/features/aquariums/components/AquariumFormModal';
+import { AquariumFormModal, AquariumFormValues } from '@/features/aquariums/components/AquariumFormModal';
 import { useAquariums, useAquariumMutations } from '@/features/aquariums/hooks/useAquariums';
 import { Aquarium } from '@/shared/types';
 import { Modal } from '@/shared/ui/Modal';
+import { useI18n } from '@/i18n/LanguageProvider';
 
 export const DashboardPage = () => {
   const { data, isLoading, error } = useAquariums();
@@ -15,8 +16,9 @@ export const DashboardPage = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [editAquarium, setEditAquarium] = useState<Aquarium | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<Aquarium | null>(null);
+  const { t } = useI18n();
 
-  const handleSubmit = async (payload: Omit<Aquarium, 'id'>) => {
+  const handleSubmit = async (payload: AquariumFormValues) => {
     if (editAquarium) {
       await update.mutateAsync({ id: editAquarium.id, payload });
     } else {
@@ -31,11 +33,9 @@ export const DashboardPage = () => {
   return (
     <div className="space-y-8">
       <PageHeader
-        title="Your Aquariums"
-        subtitle="Dashboard"
-        actions={
-          <Button onClick={() => setModalOpen(true)}>Create Aquarium</Button>
-        }
+        title={t('dashboard.title')}
+        subtitle={t('dashboard.subtitle')}
+        actions={<Button onClick={() => setModalOpen(true)}>{t('dashboard.create')}</Button>}
       />
 
       {isLoading && (
@@ -54,8 +54,8 @@ export const DashboardPage = () => {
 
       {!isLoading && list.length === 0 && (
         <EmptyState
-          title="No aquariums yet"
-          description="Create your first aquarium to start tracking livestock and measurements."
+          title={t('dashboard.emptyTitle')}
+          description={t('dashboard.emptyDescription')}
         />
       )}
 
@@ -87,16 +87,15 @@ export const DashboardPage = () => {
 
       <Modal
         open={Boolean(deleteTarget)}
-        title="Delete aquarium"
+        title={t('dashboard.deleteTitle')}
         onClose={() => setDeleteTarget(null)}
       >
         <p className="text-sm text-ink-600">
-          This action cannot be undone. Do you want to delete{' '}
-          <span className="font-semibold">{deleteTarget?.name}</span>?
+          {t('dashboard.deleteQuestion', { name: deleteTarget?.name ?? '' })}
         </p>
         <div className="mt-6 flex justify-end gap-3">
           <Button variant="ghost" onClick={() => setDeleteTarget(null)}>
-            Cancel
+            {t('common.cancel')}
           </Button>
           <Button
             variant="danger"
@@ -107,7 +106,7 @@ export const DashboardPage = () => {
               setDeleteTarget(null);
             }}
           >
-            Delete
+            {t('common.delete')}
           </Button>
         </div>
       </Modal>
