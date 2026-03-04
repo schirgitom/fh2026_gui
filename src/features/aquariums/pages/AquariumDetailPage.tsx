@@ -143,6 +143,14 @@ export const AquariumDetailPage = () => {
                 <LatestMeasurements measurement={latestMeasurement} />
               </div>
             )}
+            {!measurementLoading && !latestMeasurement && (
+              <div className="mt-4">
+                <EmptyState
+                  title={t('measurement.emptyTitle')}
+                  description={t('measurement.emptyDescription')}
+                />
+              </div>
+            )}
           </Card>
         </div>
       )}
@@ -288,6 +296,12 @@ export const AquariumDetailPage = () => {
           {measurementLoading && <Skeleton className="h-64" />}
           {!measurementLoading && latestMeasurement && (
             <LatestMeasurements measurement={latestMeasurement} singleLineValues singleRow />
+          )}
+          {!measurementLoading && !latestMeasurement && (
+            <EmptyState
+              title={t('measurement.emptyTitle')}
+              description={t('measurement.emptyDescription')}
+            />
           )}
           <MeasurementsChart aquariumId={aquariumId ?? ''} />
           <MeasurementAggregates aquariumId={aquariumId ?? ''} />

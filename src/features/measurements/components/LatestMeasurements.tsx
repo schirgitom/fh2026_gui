@@ -25,7 +25,10 @@ const GaugeCard = ({
   singleLineValue?: boolean;
   singleRow?: boolean;
 }) => {
+  const { t } = useI18n();
   const hasValue = typeof value === 'number' && Number.isFinite(value);
+  const isInvalid = value == null || !hasValue || value === 0;
+  const showGauge = hasValue && !isInvalid;
   const gaugeValue = hasValue ? value : min;
   const gaugeWidth = singleRow ? 224 : 140;
   const gaugeHeight = singleRow ? 128 : 78;
@@ -36,35 +39,40 @@ const GaugeCard = ({
         <div>
           <p className="text-xs uppercase tracking-[0.25em] text-ink-400">{title}</p>
           <div
-            className={`mt-1 whitespace-nowrap font-semibold text-ink-900 ${
+            className={`mt-1 whitespace-nowrap font-semibold ${
+              isInvalid ? 'text-red-600' : 'text-ink-900'
+            } ${
               singleLineValue ? 'text-2xl leading-tight' : 'text-3xl'
             }`}
           >
-            {hasValue ? value.toFixed(2) : '--'} {unit}
+            {isInvalid ? t('measurement.invalid') : hasValue ? value.toFixed(2) : '--'}
+            {!isInvalid && ` ${unit}`}
           </div>
         </div>
-        <div
-          className={`${
-            singleRow ? 'h-32 w-56 self-end' : 'h-[78px] w-[140px] self-center'
-          } shrink-0 overflow-hidden`}
-        >
-          <GaugeComponent
-            type="radial"
-            minValue={min}
-            maxValue={max}
-            value={gaugeValue}
-            style={{ width: gaugeWidth, height: gaugeHeight }}
-            arc={{
-              subArcs: [
-                { limit: max * 0.5, color: '#7ddcff' },
-                { limit: max * 0.75, color: '#4ecbff' },
-                { color: '#1fb3ff' }
-              ]
-            }}
-            pointer={{ type: 'arrow', elastic: true }}
-            labels={{ valueLabel: { hide: true } }}
-          />
-        </div>
+        {showGauge && (
+          <div
+            className={`${
+              singleRow ? 'h-32 w-56 self-end' : 'h-[78px] w-[140px] self-center'
+            } shrink-0 overflow-hidden`}
+          >
+            <GaugeComponent
+              type="radial"
+              minValue={min}
+              maxValue={max}
+              value={gaugeValue}
+              style={{ width: gaugeWidth, height: gaugeHeight }}
+              arc={{
+                subArcs: [
+                  { limit: max * 0.5, color: '#7ddcff' },
+                  { limit: max * 0.75, color: '#4ecbff' },
+                  { color: '#1fb3ff' }
+                ]
+              }}
+              pointer={{ type: 'arrow', elastic: true }}
+              labels={{ valueLabel: { hide: true } }}
+            />
+          </div>
+        )}
       </div>
     </div>
   );

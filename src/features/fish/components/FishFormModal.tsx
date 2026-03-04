@@ -21,15 +21,20 @@ const defaultForm: Omit<Fish, 'id' | 'aquariumId'> = {
 
 export const FishFormModal = ({ open, onClose, onSubmit, initial }: FishFormModalProps) => {
   const [form, setForm] = useState<Omit<Fish, 'id' | 'aquariumId'>>(defaultForm);
+  const [isAlive, setIsAlive] = useState(true);
   const { t } = useI18n();
+  const DATE_TIME_MIN = '0001-01-01T00:00:00';
+  const isMinDate = (value?: string) => Boolean(value && value.startsWith('0001-01-01'));
 
   useEffect(() => {
     if (open) {
+      const alive = !initial?.deathDate || isMinDate(initial.deathDate);
+      setIsAlive(alive);
       setForm({
         name: initial?.name ?? '',
         amount: initial?.amount ?? 1,
         description: initial?.description ?? '',
-        deathDate: initial?.deathDate ?? ''
+        deathDate: alive ? '' : initial?.deathDate ?? ''
       });
     }
   }, [open, initial]);
@@ -39,7 +44,7 @@ export const FishFormModal = ({ open, onClose, onSubmit, initial }: FishFormModa
     onSubmit({
       ...form,
       amount: Number(form.amount),
-      deathDate: form.deathDate || undefined
+      deathDate: isAlive ? DATE_TIME_MIN : form.deathDate || undefined
     });
   };
 
@@ -67,9 +72,24 @@ export const FishFormModal = ({ open, onClose, onSubmit, initial }: FishFormModa
           value={form.description ?? ''}
           onChange={(event) => setForm((prev) => ({ ...prev, description: event.target.value }))}
         />
+        <label className="inline-flex items-center gap-2 text-sm text-ink-700">
+          <input
+            type="checkbox"
+            checked={isAlive}
+            onChange={(event) => {
+              const nextAlive = event.target.checked;
+              setIsAlive(nextAlive);
+              if (nextAlive) {
+                setForm((prev) => ({ ...prev, deathDate: '' }));
+              }
+            }}
+          />
+          {t('fish.isAlive')}
+        </label>
         <Input
           label={t('fish.deathDate')}
           type="date"
+          disabled={isAlive}
           value={form.deathDate?.slice(0, 10) ?? ''}
           onChange={(event) => setForm((prev) => ({ ...prev, deathDate: event.target.value }))}
         />

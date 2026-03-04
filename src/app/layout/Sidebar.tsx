@@ -17,7 +17,10 @@ export const Sidebar = ({ open, onClose }: SidebarProps) => {
   const aquarium = aquariums?.find((item) => item.id === aquariumId);
   const isFreshwater = aquarium?.type === 'freshwater';
 
-  const navItems = [{ label: t('sidebar.dashboard'), to: '/', end: true }];
+  const navItems = [
+    { label: t('sidebar.dashboard'), to: '/', end: true },
+    { label: t('sidebar.account'), to: '/account' }
+  ];
   const detailNavItems = routeMatch
     ? [
         { label: t('detail.tabs.overview'), to: `${routeMatch.pathname}?tab=overview` },
