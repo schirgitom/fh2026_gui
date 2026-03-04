@@ -14,6 +14,7 @@ import { Button } from '@/shared/ui/Button';
 import { Modal } from '@/shared/ui/Modal';
 import { LatestMeasurements } from '@/features/measurements/components/LatestMeasurements';
 import { MeasurementsChart } from '@/features/measurements/components/MeasurementsChart';
+import { MeasurementAggregates } from '@/features/measurements/components/MeasurementAggregates';
 import { useLatestMeasurement } from '@/features/measurements/hooks/useMeasurements';
 import { Skeleton } from '@/shared/ui/Skeleton';
 import { EmptyState } from '@/shared/components/EmptyState';
@@ -289,6 +290,7 @@ export const AquariumDetailPage = () => {
             <LatestMeasurements measurement={latestMeasurement} singleLineValues singleRow />
           )}
           <MeasurementsChart aquariumId={aquariumId ?? ''} />
+          <MeasurementAggregates aquariumId={aquariumId ?? ''} />
         </div>
       )}
     </div>

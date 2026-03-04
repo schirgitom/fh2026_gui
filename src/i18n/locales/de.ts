@@ -132,6 +132,14 @@ export const de: TranslationMap = {
   'measurement.lastUpdated': 'Zuletzt aktualisiert: {{value}}',
   'measurement.historical': 'Historische Messungen',
   'measurement.trends': 'Verlauf über die Zeit',
+  'measurement.aggregate': 'GraphQL-Aggregate',
+  'measurement.aggregateTitle': 'Aggregierte Messwerte',
+  'measurement.aggregateEmpty': 'Keine aggregierten Messwerte im gewählten Zeitraum gefunden.',
+  'measurement.resolution': 'Auflösung',
+  'measurement.resolution.fiveMinutes': '5 Minuten',
+  'measurement.resolution.oneHour': '1 Stunde',
+  'measurement.resolution.oneDay': '1 Tag',
+  'measurement.bucket': 'Zeitfenster',
 
   'error.title': 'Etwas ist schiefgelaufen',
   'error.message': 'Bitte aktualisiere die Seite oder kontaktiere den Support, falls das Problem weiterhin besteht.'

@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { measurementApi } from '@/features/measurements/api/measurementApi';
+import { AggregateResolution, measurementApi } from '@/features/measurements/api/measurementApi';
 
 export const useLatestMeasurement = (aquariumId: string) => {
   return useQuery({
@@ -19,6 +19,19 @@ export const useMeasurementsRange = (
   return useQuery({
     queryKey: ['measurements', 'range', aquariumId, from, to, limit],
     queryFn: () => measurementApi.range(aquariumId, from, to, limit),
+    enabled: Boolean(aquariumId && from && to)
+  });
+};
+
+export const useMeasurementAggregates = (
+  aquariumId: string,
+  resolution: AggregateResolution,
+  from: string,
+  to: string
+) => {
+  return useQuery({
+    queryKey: ['measurements', 'aggregates', aquariumId, resolution, from, to],
+    queryFn: () => measurementApi.aggregates(aquariumId, resolution, from, to),
     enabled: Boolean(aquariumId && from && to)
   });
 };

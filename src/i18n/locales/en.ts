@@ -132,6 +132,14 @@ export const en: TranslationMap = {
   'measurement.lastUpdated': 'Last updated: {{value}}',
   'measurement.historical': 'Historical measurements',
   'measurement.trends': 'Trends over time',
+  'measurement.aggregate': 'GraphQL aggregates',
+  'measurement.aggregateTitle': 'Aggregated measurements',
+  'measurement.aggregateEmpty': 'No aggregated measurements found in the selected range.',
+  'measurement.resolution': 'Resolution',
+  'measurement.resolution.fiveMinutes': '5 minutes',
+  'measurement.resolution.oneHour': '1 hour',
+  'measurement.resolution.oneDay': '1 day',
+  'measurement.bucket': 'Time bucket',
 
   'error.title': 'Something went wrong',
   'error.message': 'Please refresh the page or contact support if the issue persists.'
