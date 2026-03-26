@@ -1,0 +1,15 @@
+services:
+  aquarium-frontend:
+    container_name: aquarium-management-system
+    image: thomasschirgi/aquarium-management-system:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        VITE_API_BASE_URL: http://localhost:7214
+        VITE_SIGNALR_BASE_URL: http://localhost:7217
+        VITE_GRAPHQL_PATH: /graphql
+        VITE_GRAPHQL_URL: http://localhost:7216/graphql
+    ports:
+      - "8080:80"
+    restart: unless-stopped

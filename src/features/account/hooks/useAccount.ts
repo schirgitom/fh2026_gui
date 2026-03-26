@@ -2,6 +2,7 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { accountApi, UpdateAccountPayload } from '@/features/account/api/accountApi';
 import { useAuthStore } from '@/features/auth/store/authStore';
 import { User } from '@/shared/types';
+import { useEffect } from 'react';
 
 const getUserId = (user: User | null | undefined): string | undefined => {
   if (!user) return undefined;
@@ -54,7 +55,7 @@ export const useAccountProfile = () => {
   );
   const setUser = useAuthStore((state) => state.setUser);
 
-  return useQuery({
+  const query = useQuery<User, Error>({
     queryKey: ['account', userId],
     queryFn: () => {
       if (!userId) {
@@ -62,9 +63,16 @@ export const useAccountProfile = () => {
       }
       return accountApi.getById(userId);
     },
-    enabled: Boolean(token && userId),
-    onSuccess: (user) => setUser(user)
+    enabled: Boolean(token && userId)
   });
+
+  useEffect(() => {
+    if (query.data) {
+      setUser(query.data);
+    }
+  }, [query.data, setUser]);
+
+  return query;
 };
 
 export const useAccountUpdate = () => {
